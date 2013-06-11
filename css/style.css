@@ -5,8 +5,12 @@ body {
 	-webkit-text-size-adjust: none;
 	min-height: 416px;
 	font-family: helvetica,sans-serif;
+	background-image:url('../images/tile.png');
+	background-repeat:repeat;
+	/*
 	-webkit-background-size:0.438em 100%; 
 	background: -webkit-gradient(linear,left top,right top,from(#c5ccd4), color-stop(71%, #c5ccd4), color-stop(72%, #cbd2d8), to(#cbd2d8));
+	*/
 	-webkit-touch-callout: none;
 }
 .center {
@@ -245,13 +249,13 @@ a:hover .arrow {
 	bottom: 10px;
 }
 .ipodlist #footer, .ipodlist #footer a {
-	text-shadow: #FFF 0 -1px 0;
+	text-shadow: #4C4C4C 0 -1px 0;
 }
 #footer a, #footer {
 	text-decoration: none;
 	font-size: 9pt;
-	color: #4C4C4C;
-	text-shadow: #FFF 0 1px 0;
+	color: #efefef;
+	text-shadow: #4C4C4C 0 1px 0;
 }
 .pageitem {
 	-webkit-border-radius: 8px;
@@ -684,8 +688,12 @@ li:last-child.store .image, .store:last-child a {
 	font-size: 17px;
 	right: 20px;
 	left: 9px;
+	color: #efefef;
+	text-shadow: #4C4C4C 0 1px 0;
+	/*
 	color: #4C4C4C;
 	text-shadow: #FFF 0 1px 0;
+	*/
 	padding: 1px 0 3px 8px;
 }
 .header {
