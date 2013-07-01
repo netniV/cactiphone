@@ -2,7 +2,7 @@
 
 /*
  * @author Giuseppe Guarino, peppeguarino -at- gmail.com
- * $Id: login.php 19 2013-06-12 13:46:51Z bastiancon3rio $
+ * $Id: login.php 23 2013-07-02 09:36:21Z bastiancon3rio $
  */
 
 include("../include/config.php");
@@ -77,7 +77,7 @@ if (isset($user) && (sizeof($user) > 0)) {
 }
 
 print "</div>";
-get_footer();
+print get_footer('login_page');
 ?>
 </body>
 </html>

@@ -2,7 +2,7 @@
 
 /*
  * @author Giuseppe Guarino, peppeguarino -at- gmail.com
- * $Id: functions.php 19 2013-06-12 13:46:51Z bastiancon3rio $
+ * $Id: functions.php 23 2013-07-02 09:36:21Z bastiancon3rio $
  */
 
 define("CHARS_PER_TIER", 3);
@@ -173,6 +173,32 @@ function getLeafs($cactiUser, $tree_id, $search_key, $tree_name, $host_id){
 	
 	return $toReturn;
 	
+}
+
+function getThold() {
+	
+	$thold_query = 'SELECT DISTINCT thold_data.*, data_template_data.name_cache, data_template_rrd.data_source_name
+		FROM thold_data
+		LEFT JOIN data_template_rrd ON data_template_rrd.id = thold_data.data_id
+		LEFT JOIN data_template_data ON data_template_data.local_data_id = thold_data.rra_id 
+		WHERE thold_alert > 0 AND thold_enabled = "on"
+		ORDER BY name_cache ASC';
+	
+	
+	$result = mobile_db_fetch_rows($thold_query);
+
+	$toReturn = "<ul class=\"pageitem\">";
+		if(sizeof($result) > 0){
+			foreach ($result as $row){
+				$toReturn .= "<li class=\"textbox\"><span class=\"header\">$row[name_cache]</span><p>$row[data_source_name] Current: $row[lastread]</p></li>";
+			}
+		} else {
+			$toReturn .= "<li class=\"textbox\"><b align=\"center\">Everything is ok</b></li>";
+
+		}
+		$toReturn .= "</ul>";
+
+		return $toReturn;
 }
 
 function getMonitor() {
@@ -464,12 +490,16 @@ function builtinAuth(){
 	return $user;
 }
 
-function get_footer() {
-	$foot = '<div id="footer"><a href="./logout.php"><b>Logout</b></a>';
- 	$foot .= '<br/><br/><a href="mailto:peppeguarino@gmail.com">Powered by Giuseppe Guarino</a><br />';
-	$foot .= '<a class="noeffect" href="http://iwebkit.net">Made with iWebKit.</a></div>';
-	
-	return $foot;
+function get_footer($login = false ) {
+        if($login != false ){
+                $foot = '<div id="footer">';
+        }else {
+                $foot = '<div id="footer"><a href="./logout.php"><b>Logout</b></a>';
+        }
+        $foot .= '<br/><br/><a href="mailto:peppeguarino@gmail.com">Powered by Giuseppe Guarino</a><br />';
+        $foot .= '<a class="noeffect" href="http://iwebkit.net">Made with iWebKit.</a></div>';
+
+        return $foot;
 }
 
 ?>

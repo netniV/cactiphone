@@ -23,7 +23,7 @@
 
 	/*
 	 * @author Giuseppe Guarino, peppeguarino -at- gmail.com
-	 * $Id: monitor.php 19 2013-06-12 13:46:51Z bastiancon3rio $
+	 * $Id: monitor.php 22 2013-07-02 08:59:18Z bastiancon3rio $
 	 */
 
 	include("./lib/cSession.class.php");
@@ -41,12 +41,25 @@
 
 <body>
 	<div id="topbar">    
-		<div id="title">Monitor Hosts</div>
+		<!-- <div id="title">Monitor Hosts</div> -->
+			<div id="duoselectionbuttons">
+				<?php
+					if(isset($_REQUEST['thold'])){
+						print '<a href="monitor.php">Monitor</a><a id="pressed" href="monitor.php?thold=1">Thresholds</a></div>';
+					} else {
+						print '<a id="pressed" href="monitor.php">Monitor</a><a href="monitor.php?thold=1">Thresholds</a></div>';
+					}
+				?>
+				
+		</div>
 	</div>
 	<div id="content">	
 		<span class="graytitle">Refresh time</span>
 		<ul class="pageitem">
-			<form name="input" action="monitor.php" method="get">
+			<form name="input" action="monitor.php?thold=1" method="get">
+			<?php if (isset($_REQUEST['thold'])){
+				print '<input type="hidden" name="thold" value="1">';
+			} ?>
 			<li class="select"><select name="rtime"   onchange="this.form.submit();">
 			<?php
 				print "<option value=\"300\" id=\"countdown\">Next refresh in $ctime seconds</option>";
@@ -59,7 +72,14 @@
 			</select><span class="arrow"></span> </li>
 			</form>
 		</ul>
-		<?php print getMonitor(); ?>
+		<?php 
+			if(isset($_REQUEST['thold'])){
+				print getThold();
+			}
+				else {
+					print getMonitor(); 
+				}
+		?>
 	</div>
 	<?php print get_footer(); ?>
 </body>
