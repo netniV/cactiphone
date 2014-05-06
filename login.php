@@ -2,7 +2,7 @@
 
 /*
  * @author Giuseppe Guarino, peppeguarino -at- gmail.com
- * $Id: login.php 23 2013-07-02 09:36:21Z bastiancon3rio $
+ * $Id: login.php 24 2014-05-07 12:39:48Z bastiancon3rio $
  */
 
 include("../include/config.php");
@@ -25,6 +25,26 @@ switch($auth_method['value']){
 		break;
 }
 
+/* Process the user  */
+if (isset($user) && (sizeof($user) > 0)) {
+	if (!isset($user['error'])){
+		$user_enabled = $user["enabled"];
+		if ($user_enabled != "on") {
+			/* Display error */
+			$errorMessage = "<div align='center' class='error'>Access Denied, user account disabled.</div><div>";
+		} else {
+			include("./lib/cSession.class.php");
+			$session = new cSession();
+			$session->start($user);
+			$session->setTimeout(1600000);
+			
+			header("location: ./");
+		}
+
+	} else {
+		$errorMessage = "</div><div align='center' class='error'>".$user['error']."</div></div>";
+	}
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -56,27 +76,10 @@ switch($auth_method['value']){
 		</ul>
 		<fieldset></form>
 <?php
-
-/* Process the user  */
-if (isset($user) && (sizeof($user) > 0)) {
-	if (!isset($user['error'])){
-		$user_enabled = $user["enabled"];
-		if ($user_enabled != "on") {
-			/* Display error */
-			print "<div align='center' class='error'>Access Denied, user account disabled.</div>";
-		} else {
-			include("./lib/cSession.class.php");
-			$session = new cSession();
-			$session->start($user);
-			$session->setTimeout(1600000);
-		}
-
-	} else {
-		print "</div><div align='center' class='error'>".$user['error']."</div>";
-	}
+if (isset($errorMessage)) {
+    print $errorMessage;
 }
 
-print "</div>";
 print get_footer('login_page');
 ?>
 </body>

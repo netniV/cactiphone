@@ -1,3 +1,14 @@
+<?php
+/*
+ * @author Giuseppe Guarino, peppeguarino -at- gmail.com
+ * $Id: monitor.php 24 2014-05-07 12:39:48Z bastiancon3rio $
+ */
+
+include("./lib/cSession.class.php");
+include("./lib/auth.php");
+include("../include/config.php");
+include("lib/functions.php");
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -20,16 +31,6 @@
 		timedRefresh(rtime, "Next refresh in <countdown> seconds");
 	</script>
 	<?php
-
-	/*
-	 * @author Giuseppe Guarino, peppeguarino -at- gmail.com
-	 * $Id: monitor.php 22 2013-07-02 08:59:18Z bastiancon3rio $
-	 */
-
-	include("./lib/cSession.class.php");
-	include("./lib/auth.php");
-	include("../include/config.php");
-	include("lib/functions.php");
 	
 	$ctime = 300;
 	if (isset($_REQUEST['rtime'])){

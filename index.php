@@ -1,3 +1,13 @@
+<?php
+/* 
+	@author Giuseppe Guarino, peppeguarino -at- gmail.com 
+	$Id: index.php 24 2014-05-07 12:39:48Z bastiancon3rio $
+*/
+include("./lib/cSession.class.php");
+include("./lib/auth.php");
+include("../include/config.php");
+include("./lib/functions.php");
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -13,14 +23,6 @@
 	<link rel="apple-touch-icon" href="images/iphone-icon.png" />
 	<style> a:link, a:visited, a:active { text-decoration: none; } </style>
 	<?php
-		/* 
-			@author Giuseppe Guarino, peppeguarino -at- gmail.com 
-			$Id: index.php 19 2013-06-12 13:46:51Z bastiancon3rio $
-		*/
-		include("./lib/cSession.class.php");
-		include("./lib/auth.php");
-		include("../include/config.php");
-		include("./lib/functions.php");
 		
 		$request = formatRequest($_REQUEST);
 				

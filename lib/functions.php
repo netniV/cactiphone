@@ -2,7 +2,7 @@
 
 /*
  * @author Giuseppe Guarino, peppeguarino -at- gmail.com
- * $Id: functions.php 23 2013-07-02 09:36:21Z bastiancon3rio $
+ * $Id: functions.php 25 2014-05-07 13:25:01Z bastiancon3rio $
  */
 
 define("CHARS_PER_TIER", 3);
@@ -496,8 +496,10 @@ function get_footer($login = false ) {
         }else {
                 $foot = '<div id="footer"><a href="./logout.php"><b>Logout</b></a>';
         }
+		$foot .= '<a class="noeffect" href="https://sourceforge.net/projects/cactiphone/">CactiPhone Project</a><br />';
         $foot .= '<br/><br/><a href="mailto:peppeguarino@gmail.com">Powered by Giuseppe Guarino</a><br />';
-        $foot .= '<a class="noeffect" href="http://iwebkit.net">Made with iWebKit.</a></div>';
+        $foot .= '<a class="noeffect" href="http://iwebkit.net">Made with iWebKit</a><br />';
+		$foot .= '</div>';
 
         return $foot;
 }
