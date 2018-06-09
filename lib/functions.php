@@ -48,22 +48,24 @@ function getLeafs($cactiUser, $tree_id, $search_key, $tree_name, $host_id){
 	$graphArray = $leafArray = $notLikeArray = array();
 	
 	$sql = "select graph_tree_items.id, graph_tree_items.title, graph_tree_items.local_graph_id, graph_tree_items.host_id, ".
-		"graph_tree_items.order_key, graph_templates_graph.title_cache as graph_title, CONCAT_WS('',description,' (',hostname,')') as hostname ".
+		"graph_tree_items.position, graph_templates_graph.title_cache as graph_title, CONCAT_WS('',description,' (',hostname,')') as hostname ".
 		"from graph_tree_items left join graph_templates_graph on ".
 		"(graph_tree_items.local_graph_id=graph_templates_graph.local_graph_id and graph_tree_items.local_graph_id>0) ".
 		"left join host on (host.id=graph_tree_items.host_id) ".
 		"where graph_tree_items.graph_tree_id = $tree_id ".
-		"and graph_tree_items.order_key like '$search_key%' ".
-		"and order_key not like '".$search_key."000%' ".
-		"order by graph_tree_items.order_key";
-		
+		"and graph_tree_items.position like '$search_key%' ".
+		"and position not like '".$search_key."000%' ".
+		"order by graph_tree_items.position";
+	
+	//echo $sql;
+	
 	$result = mobile_db_fetch_rows($sql);
 	
 	array_push($leafArray, "<ul class=\"pageitem\">");
 	foreach ($result as $row){
 		if ($row["local_graph_id"] == 0) {
 
-			$order_key = $row['order_key'];
+			$order_key = $row['position'];
 
 			if ($row["title"] != "") {
 				$gitem = "header";
@@ -81,8 +83,9 @@ function getLeafs($cactiUser, $tree_id, $search_key, $tree_name, $host_id){
 			}
 
 			$strLen = strlen($search_key) + CHARS_PER_TIER;
-
-			if ($strLen == strlen($tree_tier)){
+			//if (isset($raw['hostname'])){
+	 		   if (! isset($_GET['hostname'])) {
+			   //or ($_GET['hostname'] == $row['hostname'])) {
 				if ($gitem == "host"){
 					$toPush = "<li class=\"menu\"><a href=\"index.php?host_id=".$row['host_id']."&hostname=";
 					$toPush .=  $row['hostname']."&tree_id=$tree_id&search_key=$tree_tier\">";
@@ -92,7 +95,9 @@ function getLeafs($cactiUser, $tree_id, $search_key, $tree_name, $host_id){
 					$toPush .= "<span class=\"name\">$title</span><span class=\"arrow\"></span></a></li>";
 				}
 				array_push($leafArray, $toPush);	
+			//}
 			}
+			//echo "<br>" . $row['hostname'] . $_GET['hostname'];
 		}
 	}
 	array_push($leafArray, "</ul>");
@@ -117,11 +122,12 @@ function getLeafs($cactiUser, $tree_id, $search_key, $tree_name, $host_id){
 		$sql .=	"GROUP BY graph_templates.id) ";
 		$sql .=	"AND graph_local.host_id =$host_id ";
 		$sql .=	"ORDER BY graph_templates_graph.title_cache";
+		#echo $sql;
 
 	} else {
 		$sql = "select
 			graph_tree_items.local_graph_id,
-			graph_tree_items.order_key,
+			graph_tree_items.position,
 			graph_templates_graph.title_cache as graph_title,
 			CONCAT_WS('',host.description,' (',host.hostname,')') as hostname,
 			settings_tree.status
@@ -133,20 +139,20 @@ function getLeafs($cactiUser, $tree_id, $search_key, $tree_name, $host_id){
 			left join graph_templates on (graph_templates.id=graph_local.graph_template_id)
 			left join user_auth_perms on ((graph_templates_graph.local_graph_id=user_auth_perms.item_id and user_auth_perms.type=1 and user_auth_perms.user_id=".$cactiUser['id'].") OR (host.id=user_auth_perms.item_id and user_auth_perms.type=3 and user_auth_perms.user_id=".$cactiUser['id'].") OR (graph_templates.id=user_auth_perms.item_id and user_auth_perms.type=4 and user_auth_perms.user_id=".$cactiUser['id']."))
 			where graph_tree_items.graph_tree_id=$tree_id
-			and graph_tree_items.order_key like '$search_key%'";
+			and graph_tree_items.position like '$search_key%'";
 
 		if (sizeof($notLikeArray) != 0){
 			foreach ($notLikeArray as $key){
 
-				$sql .=	"and graph_tree_items.order_key NOT like '$key%'";
+				$sql .=	"and graph_tree_items.position NOT like '$key%'";
 
 			}
 		}
 
 		$sql .= "and graph_tree_items.local_graph_id != 0 
-			order by graph_tree_items.order_key";
+			order by graph_tree_items.position";
 	}
-
+	#echo $sql;
 	$result = mobile_db_fetch_rows($sql);
 	foreach ($result as $row){
 		$toPush = "<ul class=\"pageitem\">";
@@ -253,7 +259,7 @@ function getRootName($tree_id, $search_key){
 		#Se è una leaf
 		$sql  = "SELECT title AS index_name FROM graph_tree_items ";
 		$sql .= " where graph_tree_id = $tree_id ";
-		$sql .= " and order_key = '".str_pad($search_key, 90, "0")."'";
+		$sql .= " and position = '".str_pad($search_key, 90, "0")."'";
 	}
 
 	#echo $sql; 
@@ -481,10 +487,15 @@ function ldapAuth(){
 }
 
 function builtinAuth(){
-	$user = mobile_db_fetch_row("SELECT * FROM user_auth WHERE username = " . mobile_qstr(get_request_var_post("login_username")) . " AND password = '" . md5(get_request_var_post("login_password")) . "' AND realm = 0");
-
+	$pass_hash = mobile_db_fetch_row("SELECT password FROM user_auth WHERE username = " . mobile_qstr(get_request_var_post("login_username")) . " AND realm = 0")[password];
+        $pass_plain = get_request_var_post("login_password"); 
+	if (password_verify($pass_plain,$pass_hash)){
+	   $user = mobile_db_fetch_row("SELECT * FROM user_auth WHERE username = " . mobile_qstr(get_request_var_post("login_username")) . " AND realm = 0");
+           //$user = mobile_db_fetch_row("SELECT * FROM user_auth WHERE username = " . mobile_qstr(get_request_var_post("login_username")) . " AND password = '" . md5(get_request_var_post("login_password")) . "' AND realm = 0");
+        }
 	if (sizeof($user) < 2){
 		$user = array( 'error' => "Invalid User Name/Password Please Retype");
+		//$user = array( 'error' => "error $pass_hash $pass_plain $user");
 	}
 	
 	return $user;

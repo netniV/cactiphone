@@ -8,7 +8,8 @@
 include("../include/config.php");
 include("./lib/functions.php");
 
-$auth_method = mobile_db_fetch_row("SELECT value FROM settings WHERE name = 'auth_method'");
+#$auth_method = mobile_db_fetch_row("SELECT value FROM settings WHERE name = 'auth_method'");
+$auth_method = mobile_db_fetch_row("SELECT realm FROM user_auth WHERE username = '$user'");
 switch($auth_method['value']){
 	case 2:
 		$user = webBasicAuth();
